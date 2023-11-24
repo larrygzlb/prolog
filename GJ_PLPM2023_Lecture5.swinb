@@ -1,0 +1,400 @@
+<div class="notebook">
+
+<div class="nb-cell markdown" name="md1">
+# PLPM Lecture 5 27/10/2023
+## 1. PROGRAMS from chapter 4.1, 4.2 and 4.3
+State-transition programs: 4.1 Finding a path in a graph, 4.2 Robot task planning, 4.3 Trip planning
+</div>
+
+<div class="nb-cell markdown" name="md2">
+## 2. Using cut (5.1 and 5.2)
+</div>
+
+<div class="nb-cell markdown" name="md23">
+## 0. Recursion
+### Known recursive definitions
+
+One of my *ancestors* is one of my parents or one of *their ancestors*.
+
+A *string* of characters is a single character or a single character followed by a *string* of characters.
+
+To *decouple* a train uncouple the first carriage and then *decouple* the rest of the train.
+
+
+*Identify base cases and recursive cases*.
+
+For the recursive case, indicate how the problem reduction is realised (i.e how the problem is solved in terms of simpler problems).
+</div>
+
+<div class="nb-cell program" name="p16">
+% You talk about someone either if you know him or if you know someone who talks about him.
+%
+% A talks about B 
+talks_about(A,B) :- knows(A,B).
+talks_about(P,R) :- knows(P,Q), talks_about(Q,R).
+
+knows(bill,jane).
+knows(jane,pat).
+knows(jane,fred).
+%knows(fred,bill).
+</div>
+
+<div class="nb-cell query" name="q8">
+talks_about(bill,Y).
+</div>
+
+<div class="nb-cell markdown" name="md4">
+## Lists and Different types of recursive predicates for lists
+*Program patterns*: templates that can be used as a source of inspiration:
+ *	test for existence
+ *  test all elements
+ *  return a result when a specific element has been found
+ *  return a result considering all elements of a list
+</div>
+
+<div class="nb-cell markdown" name="md5">
+### Test for existence
+Aim: we want to know if some collection of objects has at least one object with a desired property.
+
+Example: if a list of elements has at least one element that is larger than 10.
+</div>
+
+<div class="nb-cell program" name="p1">
+% The list contains the element 10
+listwith10([Head | _Tail]) :- 
+    Head &gt; 10.    
+listwith10([_Head | Tail]) :- 
+    listwith10(Tail).
+
+/*  pattern									% OR pattern
+list_existence_test(Info, [ Head | Tail]) :-         
+	element_has_property(Info, Head).    
+list_existence_test(Info, [ Head | Tail]) :-        
+    list_existence_test(Info,Tail).
+
+% with Info the parameters about extra information
+*/
+</div>
+
+<div class="nb-cell markdown" name="md6">
+### Test all elements
+Aim: we check that all the objects in the collection (i.e. all the elements of the list) have some property.
+
+Example: all elements in the list are numbers between 0 and 9.
+</div>
+
+<div class="nb-cell program" name="p2">
+%  All elements in the list are numbers between 0 and 9
+all_09digits([]).    
+all_09digits([Head | Tail]) :-
+    member(Head, [0,1,2,3,4,5,6,7,8,9]),       
+    all_09digits(Tail).
+
+/*  pattern									 % AND pattern
+   test_all_have_property(Info, [ ]).
+   test_all_have_property(Info, [ Head | Tail]) :-
+       element_has_property(Info, Head),          
+       test_all_have_property(Info,Tail). 
+*/
+</div>
+
+<div class="nb-cell markdown" name="md24">
+Consider member/2: which pattern?
+</div>
+
+<div class="nb-cell markdown" name="md7">
+### Return a result when a specific element has been found
+We need an extra **result** argument.
+
+Aim: go over a list until an element satisfies some condition and return some result.
+
+Example: return the part of the list after an occurrence of the element a.
+</div>
+
+<div class="nb-cell program" name="p3">
+% Select the part of the list after an occurrence of the element a 
+everything_after_a( [ Head | Tail], Result) :-
+    Head = a,
+    Result = Tail.
+everything_after_a( [ _Head | Tail], Result) :-
+    everything_after_a(Tail, Result).
+
+/* pattern
+return_after_ property(Info, [ Head | Tail], Result) :-
+	property(Info, Head),
+    construct_result(Info, Head, Tail, Result).
+return_after_ property(Info, [ Head | Tail], Result) :-
+    return_after_ property(Info,Tail, Result).
+*/
+</div>
+
+<div class="nb-cell query" name="q1">
+everything_after_a([d,s,a,b,a,p],Result).
+</div>
+
+<div class="nb-cell markdown" name="md8">
+### Return a result considering all elements
+Aim: go over a list and transform each element into a new element (this can be seen as a mapping).
+
+Example: a program that takes a list of integers and 'triples' them.
+</div>
+
+<div class="nb-cell program" name="p4">
+%a program that takes a list of integers and 'triples' them.
+triple([], []).
+triple([ H1 | T1], [ H2 | T2]) :-         
+    H2 is 3 * H1,
+    triple(T1, T2).
+
+/* pattern
+process_all(Info, [], []).
+process_all(Info, [ H1 |  T1], [ H2 | T2]) :-
+    process_one(Info, H1, H2),
+    process_all(Info, T1, T2).
+*/
+</div>
+
+<div class="nb-cell markdown" name="md9">
+### Example 1
+Consider the predecessor/3 predicate of the reading assignment:  which pattern?
+</div>
+
+<div class="nb-cell program" name="p19">
+predecessor(X,Y,[X,Y]) :- 
+    parent(X,Y).
+predecessor(X,Y, [X|Pred_YZ]) :- 
+    parent(X,Z), 
+    predecessor(Z,Y, Pred_YZ).
+</div>
+
+<div class="nb-cell markdown" name="md27">
+### Example 2
+Consider the predicate nth(N,L,El) which for a given positive integer N and a given list L, returns the Nth element in the list L, as El.
+
+Which pattern?
+</div>
+
+<div class="nb-cell program" name="p6">
+
+</div>
+
+<div class="nb-cell markdown" name="md10">
+### Example 3
+What is wrong with the following program?
+</div>
+
+<div class="nb-cell program" name="p5">
+triple([], []).
+triple([ H1 | T1], T2) :-
+    H2 is 3 * H1,
+    triple(T1, [H2 | T2]).
+</div>
+
+<div class="nb-cell query" name="q2">
+triple([1,2,3],A).
+</div>
+
+<div class="nb-cell markdown" name="md11">
+### Another approach to Return Results: Accumulator List
+Before: building (result) structures in the clause head, typically the tail is determined by the recursive call
+
+Alternative: building structures in the clause body by using an accumulator argument
+</div>
+
+<div class="nb-cell program" name="p7">
+triple([], Res, Res).
+triple([ H1 |  T1], Acc, Res) :-        
+    H2 is 3 * H1,        
+    triple(T1, [H2 | Acc], Res).
+% call ?
+</div>
+
+<div class="nb-cell markdown" name="md25">
+Note that the recursive call is simpler in the first argument (the recursion argument) and more complex in the second argument (the accumulator).
+</div>
+
+<div class="nb-cell query" name="q3">
+
+</div>
+
+<div class="nb-cell program" name="p17">
+/* pattern
+process_all(Info, [], Acc,Acc).
+process_all(Info, [ H1 |  T1], Acc, Ans) :-
+   process_one(Info,H1,H2),
+   process_all(Info, T1, [H2 | Acc], Ans).
+*/
+</div>
+
+<div class="nb-cell markdown" name="md15">
+### Example List reversal
+Write a version with an accumulator list.
+</div>
+
+<div class="nb-cell program" name="p12">
+
+</div>
+
+<div class="nb-cell markdown" name="md3">
+## 4.1 Path problem
+- what kind of graph?
+- which recursion pattern?
+</div>
+
+<div class="nb-cell program" name="p8">
+link(a,b). 
+link(b,d).
+link(a,c).
+link(c,d).
+link(c,f).
+link(f,a).
+
+path(Node,Node,[Node]).
+path(StartN,EndN,[StartN|Rest]):-
+     link(StartN, NextN),
+     path(NextN,EndN,Rest).
+</div>
+
+<div class="nb-cell query" name="q4">
+path(a,f,P).
+</div>
+
+<div class="nb-cell markdown" name="md12">
+Alternative call? Alternative version?
+</div>
+
+<div class="nb-cell markdown" name="md14">
+## Robot task planning.
+The robot task planning is an example of a state transition program.
+</div>
+
+<div class="nb-cell program" name="p9">
+% State of the robot’s world =state( RobotLocation, BasketLocation, RubbishLocation) 
+% action( State, Action, NewState): Action in State produces NewState
+% We assume robot never drops rubbish to floor, and never pushes rubbish around
+
+% Robot and rubbish both at Pos1; Pick up rubbish from floor; Rubbish now held by robot
+action( state( Pos1, Pos2, floor(Pos1)), pickup, state( Pos1, Pos2, held)).
+% Robot and basket both at Pos; Drop rubbish to basket; Rubbish now in basket
+action( state( Pos, Pos, held), drop, state( Pos, Pos, in_basket)).
+% Robot and basket both at Pos; Push basket from Pos to NewPos; Robot and basket now at NewPos
+action( state( Pos, Pos, Loc), push( Pos, NewPos), state( NewPos, NewPos, Loc)).
+% Go from Pos1 to NewPos1
+action( state( Pos1, Pos2, Loc), go( Pos1, NewPos1), state( NewPos1, Pos2, Loc)).
+
+% plan( StartState, FinalState, Plan)
+% To achieve State from State itself, do nothing
+plan( State, State, []).
+plan( State1, GoalState, [ Action1 | RestOfPlan]) :- 
+    action( State1, Action1, State2),	% Make first action resulting in State2 
+    plan( State2, GoalState, RestOfPlan). % Find rest of plan
+</div>
+
+<div class="nb-cell query" name="q5">
+S0 = state(door,corner2,floor(middle)), append(Plan, _,_), plan(S0,state(_,_,in_basket), Plan).
+</div>
+
+<div class="nb-cell markdown" name="md13">
+## 4.3 Trip planning 
+Also a state transition problem.
+</div>
+
+<div class="nb-cell markdown" name="md16">
+# 5.1 and 5.2 Using cut
+</div>
+
+<div class="nb-cell markdown" name="md17">
+# Understanding the use of cut: parent goal
+
+Consider the definition of the *parent goal* on p.130: the parent goal determines the scope of the cut. 
+
+"Let us call the *parent goal* the goal that matched the head of the clause containing the cut.  When the cut is encountered as a goal it succeeds immediately, but it commits the system to all choices made between the parent goal was involked and the time the cut was encountered. All the remaining alternatives between the parent goal and the cut are discarded."
+
+Consider the following program with a cut in the first clause of p.
+
+- Draw an execution tree for the query ?- r(toplevel),p. 
+
+- and indicate the *parent goal* of the cut in this execution tree.
+</div>
+
+<div class="nb-cell program" name="p10">
+r(X) :- write(r1(X)).
+r(X) :- write(r2(X)).
+
+p :- r(frp), !, q(Z), write(Z),nl.
+p :- write(p2).
+
+q(a).
+q(b).
+</div>
+
+<div class="nb-cell query" name="q6">
+r(frtl),p.
+</div>
+
+<div class="nb-cell markdown" name="md18">
+# Understanding the use of cut (bis)
+
+What are all possible solutions for the queries pred1([a,b,c],A), pred2([a,b,c],A)
+and pred3([a,b,c],A) (these are three separate queries), given the following
+predicate definitions:
+</div>
+
+<div class="nb-cell program" name="p11">
+pred1(L,A) :-
+	member(A,L).
+pred1(_,2).
+
+pred2(L,A) :-
+	!,
+	member(A,L).
+pred2(_,2).
+
+pred3(L,A) :-
+	member(A,L),
+	!.
+pred3(_,2).
+</div>
+
+<div class="nb-cell markdown" name="md19">
+Make a prediction for each of the queries, then run each of them. Are the answers as you expected? If not, can you figure out where you went wrong? Use the slack channel if the answer is different than you expected and you don’t understand why.
+</div>
+
+<div class="nb-cell query" name="q7">
+pred1([a,b,c],A).
+</div>
+
+<div class="nb-cell markdown" name="md20">
+## Indexing in the Prolog implementations
+Consider again the append/3 predicate. Could we use the cut somewhere? For a specific version?
+</div>
+
+<div class="nb-cell program" name="p13">
+g_append([],L,L).
+g_append([X|U],V,[X|W]) :- g_append(U,V,W).
+</div>
+
+<div class="nb-cell markdown" name="md21">
+From the manual (2.18.3): The base-line functionality of Prolog implementations provides *indexing on constants and functor (name/arity) on the first argument*.
+</div>
+
+<div class="nb-cell program" name="p14">
+% what is the effect of indexing on ?- g_append([1,2,3],[a,[1,2],[]],List).
+
+% what is the effect of indexing on ?- g_append(L1,L2,[a,b,c,d]).
+</div>
+
+<div class="nb-cell markdown" name="md22">
+Consider the parent/2 facts. What about indexing?
+</div>
+
+<div class="nb-cell program" name="p15">
+parent(pam,bob).
+parent(tom,bob).
+parent(tom,liz).
+parent(bob,ann).
+parent(bob,pat).
+parent(pat,jim).
+</div>
+
+</div>

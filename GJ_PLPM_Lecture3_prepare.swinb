@@ -1,0 +1,134 @@
+<div class="notebook">
+
+<div class="nb-cell markdown" name="md2">
+# Reading assignment Lecture 3 PLPM 2023
+</div>
+
+<div class="nb-cell markdown" name="md1">
+# 1. Prepare rest of chapter 2
+2.5 Order of clauses and goals  52 
+
+2.6 The relation between Prolog and Logic  57
+</div>
+
+<div class="nb-cell markdown" name="md3">
+## 2.5 Order of clauses and goals
+Q1: Draw the search tree (as explained in the tutorial of Bos) for the query in the following example.
+</div>
+
+<div class="nb-cell program" name="p1">
+parent(pam,bob).
+parent(tom,bob).
+parent(tom,liz).
+parent(bob,ann).
+parent(bob,pat).
+parent(pat,jim).
+
+pred(X,Y) :- parent(X,Y).
+pred(X,Y) :- 
+    pred(Z,Y),     
+    parent(X,Z).
+</div>
+
+<div class="nb-cell query" name="q1">
+pred(P,bob).
+</div>
+
+<div class="nb-cell markdown" name="md4">
+# 2. Prepare chapter 3: Lists, Operators, Arithmetic, 60-85
+3.1 Representation of lists 60
+
+3.2 Some operations on lists 62 
+
+	3.2.1 Membership
+    
+    3.2.2 Concatenation
+</div>
+
+<div class="nb-cell markdown" name="md5">
+## 3.1 Representation of lists
+
+Q2: Give the (syntax) tree representation of the following Prolog lists:&lt;br&gt;
+a)  [ 1,  2 ] &lt;br&gt;
+b)  [ 1 , T ] &lt;br&gt;
+c)  [ 1  |  T ] &lt;br&gt;
+d)  [ [1,2,3], 4]
+</div>
+
+<div class="nb-cell markdown" name="md10">
+Q3: What is the result of matching the Prolog term [Head | Tail]  with the following Prolog terms?
+In case that the matching succeeds, what are the bindings of the variables Head and Tail?&lt;br&gt;
+a)  [ 1,  2 ] &lt;br&gt;
+b)  [ 1 , T ] &lt;br&gt;
+c)  [ 1  |  T ] &lt;br&gt;
+d)  [hello, [1,2,3], 4]
+</div>
+
+<div class="nb-cell markdown" name="md8">
+## 3.2 Some operation on lists
+
+Another difference with Bratko is that Prolog systems (including SWI Prolog) do not use conc (3.2.2) but append/3. Consult the manual for append/3. You will see that append/3 is one of the predicates of the library for lists of SWI Prolog (as is member/2).  When you use one of these predicates in your program or query the predicate is autoloaded. So, you can just use them.
+</div>
+
+<div class="nb-cell markdown" name="md9">
+Formulate some queries using the predicates member/2 and append/3 and run them.
+</div>
+
+<div class="nb-cell program" name="p2">
+Preprare
+</div>
+
+<div class="nb-cell program" name="p5">
+anc(X,Y):- parent(X,Y).
+anc(X,Y):- anc(X,Z), parent(Z,Y). % parent, anc 把recursive放在tail，形成 tail-recursion，这个比较好，为什么？optimize，有时候方便复用variable name 
+
+?- anc(pam,jim).
+ /   \
+     ?- anc(pam,Z),parent(Z,jim).
+    / \
+       ?- anc(pam,Z), parent(Z,Z), parent(Z,jim).
+      % more or less answers???  less because the condtion is more strict
+</div>
+
+<div class="nb-cell markdown" name="md6">
+
+</div>
+
+<div class="nb-cell program" name="p4">
+anc(X,Y):- 
+    parent(X,Y)
+    ; 
+    parent(Z,Y),
+    anc(X,Z).
+% 尽量不要用这种
+</div>
+
+<div class="nb-cell program" name="p6">
+
+</div>
+
+<div class="nb-cell program" name="p8">
+
+</div>
+
+<div class="nb-cell program" name="p10">
+
+</div>
+
+<div class="nb-cell program" name="p11">
+
+</div>
+
+<div class="nb-cell program" name="p7">
+
+</div>
+
+<div class="nb-cell program" name="p3">
+
+</div>
+
+<div class="nb-cell program" name="p9">
+
+</div>
+
+</div>

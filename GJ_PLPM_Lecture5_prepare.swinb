@@ -1,0 +1,111 @@
+<div class="notebook">
+
+<div class="nb-cell markdown" name="md1">
+# Reading assignment Lecture 5 PLPM 27/10/2023
+</div>
+
+<div class="nb-cell markdown" name="md2">
+# Prepare (part of) Chapter 4: Programming Examples, p. 86-105.
+
+4.1 Finding a path in a graph 86
+
+4.2 Robot task planning 90
+
+4.3 Trip planning 97
+</div>
+
+<div class="nb-cell markdown" name="md3">
+# Prepare (part of) Chapter 5 Controlling Backtracking, p 126-142
+5.1 Preventing backtracking  126
+
+5.2 Examples of using cut   131
+</div>
+
+<div class="nb-cell markdown" name="md14">
+# Search programs: path finding
+</div>
+
+<div class="nb-cell markdown" name="md13">
+Consider the plan/3 predicate (in Figure 4.4 of 2012 edition).  Note the role of the third argument.
+
+(Q1) Extend the following predecessor/2 predicate so that it also gives the list of predecessors when it succeeds.
+</div>
+
+<div class="nb-cell program" name="p1">
+predecessor(X,Y) :- parent(X,Y).
+predecessor(X,Y) :- parent(X,Z), predecessor(Z,Y).
+</div>
+
+<div class="nb-cell markdown" name="md6">
+(Q2).a Consider the trip planner of Figure 4.7.  Note that : is a defined operator that
+is used in a non-arithmetic context.  What is its role?
+
+(Q2).b As this trip program has to search for a solution, it will have a number of backtrack points (also known as choice points). Indicate where they are by giving the calls in the program where backtracking occurs.
+    
+(Q2).c Make exercise 4.3 p. 102.
+
+(Q2).d *After reading 5.1 and 5.2* Would it make sense to add cuts to the timetable/1 predicate? or to the second and third clause of the rest_schedule predicate? Explain your answer.
+</div>
+
+<div class="nb-cell markdown" name="md7">
+## Controlling backtracking
+
+Consider the following clauses for the predicate length/2:
+</div>
+
+<div class="nb-cell program" name="p2">
+gj_length([],0). 
+gj_length([X], 1). 
+gj_length( [H | T] , L) :- gj_length(T,L1), L is L1 + 1 .
+</div>
+
+<div class="nb-cell markdown" name="md8">
+(Q3).a What is wrong with this predicate?
+
+(Q3).b Now, change the second clause into
+</div>
+
+<div class="nb-cell program" name="p3">
+gj_length([X], 1):- !.
+</div>
+
+<div class="nb-cell markdown" name="md9">
+Is this better? 
+
+Is this as it should be?
+
+(Q3).c Use an accumulator to formulate a tail-recursive version for gj_length/2.
+</div>
+
+<div class="nb-cell markdown" name="md10">
+## append/3 and time complexity
+Consider the following version of the predicate reverse(L,R)
+which succeeds if the list R is the reversal of list L.
+</div>
+
+<div class="nb-cell program" name="p4">
+reverse([],[]).
+reverse([H|Tail1], R) :-
+	reverse(Tail1,Tail2),
+	append(Tail2,[H], R).         
+% Note that append/3 is the same predicate as conc/3 in Bratko
+</div>
+
+<div class="nb-cell markdown" name="md11">
+(Q4).a How many calls (to the Prolog predicates reverse/2 and append/3) do you have to execute for reversing a list of N elements? In other words: on p. 50 in Figure 2.11, how many times will you call match(T1,T2,MatchOk, Instant)?
+
+(Q4).b Note that you can use the built-in time/1 to obtain information about the execution.
+Run the following query
+</div>
+
+<div class="nb-cell query" name="q1">
+length(_L,100), time(reverse(_L,K)).
+</div>
+
+<div class="nb-cell markdown" name="md12">
+The time/1 builtin reports the number of logical inferences for the query: this number closely corresponds to the number of calls in a complete trace of the query.
+                 
+Does the result of the above query confirm your answer for (Q4).a?
+</div>
+
+</div>

@@ -1,0 +1,57 @@
+% Jan 2K17 
+%Q5: registers
+% Query with ?- solve([a,b,c,d],[a,d,a,b], A,S).
+
+swap(S1, S2, I,J):-
+    I1 is I -1,
+    length(L1, I1),
+    append(L1,[Eli|L2], S1),
+   % length(S1, TL),
+    J1 is J-(I + 1),
+    length(L3, J1),
+    append(L3, [Elj|L4], L2),
+    append(L1,[Elj|L3], P1), append(P1, [Eli|L4], S2).
+
+action(S1, S2,action(copy, I)):-
+    length(S1, Len),
+    makelist(Getallen, Len),
+    member(I, Getallen),
+    copy(S1, S2, I).
+
+action(S1, S2, action(swap, I,J)):-
+    length(S1, Len),
+    makelist(Getallen, Len),
+    member(I, Getallen), member(J, Getallen), J>I,
+    swap(S1, S2, I,J).
+
+makelist([1], 1).
+makelist([I|T], I):-
+    I>0,
+    I1 is I - 1,
+    makelist(T, I1).
+    
+
+copy(S1, S2, I):-
+    length(S1, TL), I<TL, % if I = 10, then copy to first
+    I1 is I-1, length(L1, I1),
+    append(L1, [E4,_E5|T], S1),
+    append(L1, [E4,E4|T], S2).
+
+	%special case for copying the last element
+copy(S1, S2, I):-
+    length(S1, TL), I = TL,
+    append([_X|L1], [Last], S1),
+    append([Last|L1], [Last], S2).
+
+solve(S1, S2, ActionList, StateList):-
+    append(L1, _,_),
+    length(L1, Max),    
+    iteration(S1, S2, Max, [],[S1], ActionList, StateList).
+
+iteration(S1, S1, _Max, AccA, AccS, AccA, AccS).
+iteration(S1, S2, Max, AccA, AccS, Actions, States):-
+    length(AccA, Amount),
+    Amount<Max,    
+    action(S1, S3, Action),
+    not(member(S3, AccS)),
+    iteration(S3, S2, Max, [Action|AccA], [S3|AccS], Actions, States).

@@ -1,0 +1,251 @@
+<div class="notebook">
+
+<div class="nb-cell markdown" name="md1">
+# PLPM Lecture 4 20/10/2023
+
+Chapter 3: Lists, Operators, Arithmetic, 67-85
+
+3.2 Some operations on lists 62
+
+3.3 Operators 74
+
+3.4 Arithmetic 79
+</div>
+
+<div class="nb-cell markdown" name="md2">
+## Questions?
+</div>
+
+<div class="nb-cell markdown" name="md3">
+## 3.1 List notation
+
+Be careful: important difference between "[ , , , ]" and the head-tail notation "|".
+</div>
+
+<div class="nb-cell markdown" name="md5">
+## 3.2 Operations on lists
+
+### member/2  (see Lecture 3)
+This predicate can be used to check whether an element belongs to a list, but also in many other ways.
+</div>
+
+<div class="nb-cell markdown" name="md6">
+### append/3 (in Bratko conc/3)  (see Lecture 3)
+
+See manual for more example queries https://www.swi-prolog.org/
+</div>
+
+<div class="nb-cell markdown" name="md8">
+### Adding an element to a list
+
+How do you add an element E to a list L1?
+
+?-  ..., compute_list(L1), compute_item(E), % and now add element E to list L1
+
+- as the first element in the list, or as the last element in the list
+- using append/3, or more directly
+</div>
+
+<div class="nb-cell program" name="p5">
+% first 
+% 
+
+% last
+</div>
+
+<div class="nb-cell markdown" name="md21">
+What do you notice about the efficiency of adding an element to a list?
+</div>
+
+<div class="nb-cell markdown" name="md4">
+### The predicate prefix(P,L) 
+succeeds if the list P is a prefix of the list L. 
+
+For example, [1,2] is a prefix of [1,2,3,4,5] but [1,2,4] is not.
+
+Define this predicate.
+</div>
+
+<div class="nb-cell program" name="p1">
+
+</div>
+
+<div class="nb-cell markdown" name="md7">
+### The predicate translate(ListNbs,ListWords)
+succeeds if ListNbs is a list of numbers between 0 and 9 and ListWords is the list with corresponding words: for example 
+
+?- translate([3,5,1], Ws). succeeds with Ws = [three, five, one].
+</div>
+
+<div class="nb-cell markdown" name="md18">
+### The predicate sublist/2
+</div>
+
+<div class="nb-cell program" data-background="true" name="p6">
+sublist(S,L) :- 
+    append(L1,L2,L),
+    append(S,L3,L2).
+</div>
+
+<div class="nb-cell markdown" name="md19">
+How often does the query ?- sublist(S, [a,b,c]). succeeds with S = []?
+</div>
+
+<div class="nb-cell query" name="q2">
+append(L1,L2,[a,b,c]).
+</div>
+
+<div class="nb-cell query" name="q1">
+sublist(S,[a,b,c]).
+</div>
+
+<div class="nb-cell markdown" name="md16">
+### The predicate reverse(List,ReversedList) 
+succeeds if ReversedList is the reversed list of List, e.g. ?- reverse([1,2,3,4], [4,3,2,1]) succeeds.
+</div>
+
+<div class="nb-cell markdown" name="md17">
+see also exercise 3.4 in Bratko and section 6.2 in Learn Prolog Now http://cs.union.edu/~striegnk/learn-prolog-now/html/node49.html
+</div>
+
+<div class="nb-cell program" name="p10">
+nreverse([],[]).
+% nreverse([X|T], Rev) :-
+%    nreverse(T, Tr),
+</div>
+
+<div class="nb-cell markdown" name="md22">
+This version is known as naieve reverse : How many calls to append/3? see trace!
+
+Linear complexity?
+
+Alternative/better version of reverse: introduce an extra auxiliary argument, namely an accumulator (list).
+</div>
+
+<div class="nb-cell program" name="p9">
+reverse(L1,L2) :- rev_acc(L1,[],L2).
+
+% rev_acc(L1, Acc, L2) succeeds if L2 is the concatenation 
+% of "the elements of L1 in reversed order" with "the elements in Acc"
+rev_acc([], L, L).
+% rev_acc([H|T], Acc, Rev) :- rev_acc(T,  ,   ).
+</div>
+
+<div class="nb-cell markdown" name="md9">
+### Deleting an item
+*Manual entries* for select/3 and delete/3.
+
+Predicate behaviour and determinism
+https://www.swi-prolog.org/pldoc/man?section=determinism
+
+(fourth case: multi (and not nondet)).
+
+SWI Prolog: delete(+List1, @Elem, -List2) is a deterministic predicate, 
+selectchk(+Elem,+List,-Rest) is semidet. 
+
+
+The mode *+*: At call time, the argument must be instantiated to a term satisfying some (informal) type specification. The argument need not necessarily be ground. For example, the term [_] is a list, although its only member is the anonymous variable, which is always unbound (and thus nonground).
+
+
+The mode *-*:Argument is an output argument. It may or may not be bound at call-time. If the argument is bound at call time, the goal behaves as if the argument were unbound, and then unified with that term after the goal succeeds. This is what is called being steadfast: instantiation of output arguments at call-time does not change the semantics of the predicate, although optimizations may be performed. For example, the goal findall(X, Goal, [T]) is good style and equivalent to findall(X, Goal, Xs), Xs = [T]47 Note that any determinism specification, e.g., det, only applies if the argument is unbound. For the case where the argument is bound or involved in constraints, det effectively becomes semidet, and multi effectively becomes nondet. 
+
+The mode *?*:	At call time, the argument must be bound to a partial term (a term which may or may not be ground) satisfying some (informal) type specification. Note that an unbound variable is a partial term. Think of the argument as either providing input or accepting output or being used for both input and output. For example, in stream_property(S, reposition(Bool)), the reposition part of the term provides input and the unbound-at-call-time Bool variable accepts output.
+
+
+The mode *@*:	Argument will not be further instantiated than it is at call-time. Typically used for type tests. 
+
+
+What about append/3?
+</div>
+
+<div class="nb-cell markdown" name="md12">
+## 3.3 Operators
+
+Figure 3.8 p. 77; op/3 in manual.
+
+- arithmetic operators + and * :  Consider the Prolog terms a + b * c  and a - b - c.
+What are their syntax trees?
+- ;/2 versus ,/2
+</div>
+
+<div class="nb-cell markdown" name="md10">
+What is the syntax tree for the following clause?
+</div>
+
+<div class="nb-cell program" data-background="true" name="p2">
+p(X,Y) :- 
+    write(1),nl,
+    write(X),nl
+    ;   
+    write(2),nl,
+    write(Y),nl.
+</div>
+
+<div class="nb-cell markdown" name="md14">
+## 3.4 Arithmetic
+
+is/2 and =/2
+</div>
+
+<div class="nb-cell query" name="q4">
+X is 1 + 2.
+</div>
+
+<div class="nb-cell query" name="q7">
+3 is 2 + S.
+</div>
+
+<div class="nb-cell query" name="q5">
+X = pair(1,2).
+</div>
+
+<div class="nb-cell query" name="q6">
+X = 1 + 2 .
+</div>
+
+<div class="nb-cell query" name="q8">
+X = 1 + 2, Y is X .
+</div>
+
+<div class="nb-cell query" name="q9">
+X = 1 + 2, X is X .
+</div>
+
+<div class="nb-cell markdown" name="md11">
+### The predicate addone/2
+
+Write  a predicate addone(L1, L2) with L1 and L2 both lists of integers such that addone(L1,L2) succeeds if for every element E1 of L1 the corresponding element E2 of L2 is equal to E1 + 1 . 
+
+For example, ?- addone([3, -6], L2).  succeeds with  L2  = [4, -5].
+
+Can you use your predicate also for the following queries:
+                    a)  ?- addone([3,7,1], [4,8,2]).
+                    b)  ?- addone(L, [4,8]).
+</div>
+
+<div class="nb-cell program" name="p3">
+
+</div>
+
+<div class="nb-cell markdown" name="md20">
+Consider the clause addone([X],[X]). Is this a good idea?
+</div>
+
+<div class="nb-cell markdown" name="md13">
+### The builtin length/2 predicate 
+can be called in different ways:
+</div>
+
+<div class="nb-cell query" name="q10">
+length(L, 5).
+</div>
+
+<div class="nb-cell query" name="q11">
+append(L, _,_), length(L, N).
+</div>
+
+<div class="nb-cell markdown" name="md15">
+Formulate a version of length (p.82) with an accumulator.
+</div>
+
+</div>

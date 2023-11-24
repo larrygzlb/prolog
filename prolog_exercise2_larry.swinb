@@ -1,0 +1,33 @@
+<div class="notebook">
+
+<div class="nb-cell program" data-background="true" name="p5">
+split_string(String, First, Rest) :-
+        sub_string(String, 0, 1, _, First),
+        sub_string(String, 1, _, 0, Rest).
+</div>
+
+<div class="nb-cell program" data-background="true" name="p1">
+reverse('').  % the base case
+reverse(Word):-  % the recursive case
+	split_string(Word,First,Rest),
+	reverse(Rest),
+	write(First).
+</div>
+
+<div class="nb-cell query" name="q4">
+reverse('hello').
+</div>
+
+<div class="nb-cell program" name="p2">
+reverse('').  % the base case
+reverse(Word):-  % the recursive case
+	split_string(Word,First,Rest),
+	write(First),
+    reverse(Rest).
+</div>
+
+<div class="nb-cell query" name="q1">
+reverse('hello').
+</div>
+
+</div>

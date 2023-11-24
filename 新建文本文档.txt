@@ -1,0 +1,5 @@
+https://swish.swi-prolog.org/p/prolog_lecture1_larry.swinb
+
+https://swish.swi-prolog.org/p/prolog_exercise1_larry.swinb
+
+https://swish.swi-prolog.org/p/prolog_lecture2_larry.swinb

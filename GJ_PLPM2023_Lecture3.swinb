@@ -1,0 +1,206 @@
+<div class="notebook">
+
+<div class="nb-cell markdown" name="md2">
+# PLPM Lecture 3  13/10/2023
+Chapter 2
+
+2.5 Order of clauses and goals 52  
+
+2.6 The relation between Prolog and Logic 57
+
+Chapter 3: Lists
+
+3.1 Representation of lists 60
+
+3.2 Some operations on lists 62
+</div>
+
+<div class="nb-cell markdown" name="md1">
+## Search trees (also known as execution trees/execution traces).
+
+Role of renaming?
+More or less answers without renaming?
+</div>
+
+<div class="nb-cell program" name="p1">
+anc(X,Y):- parent(X,Y).
+anc(X,Y):- anc(X,Z), parent(Z,Y). 
+
+?- anc(pam,jim).
+ /   \
+     ?- anc(pam,Z),parent(Z,jim).
+    / \
+       ?- anc(pam,Z), parent(Z,Z), parent(Z,jim).
+      % more or less answers???
+</div>
+
+<div class="nb-cell markdown" name="md3">
+## 2.5 Order of clauses and goals
+
+Four different versions of ancestor in Figure 2.12.
+What is the "normal" one? taking into account the execution of Prolog.
+
+What about using disjunction in the body of ancestor/2? preferred Prolog style?
+</div>
+
+<div class="nb-cell program" name="p2">
+anc(X,Y):- 
+    parent(X,Y)
+    ; 
+    parent(Z,Y),
+    anc(X,Z).
+</div>
+
+<div class="nb-cell markdown" name="md4">
+Questions?
+</div>
+
+<div class="nb-cell markdown" name="md5">
+## 3.1 List notation
+
+Be careful: important difference between "[ , , , ]" and the head-tail notation "|".
+
+Lists are *recursive* data structures. 
+
+Example:  [ 1, [a,b], 3];  
+	- Head? 
+    - Tail? 
+    - Syntax tree?
+
+Which Prolog terms do you use to represent:
+</div>
+
+<div class="nb-cell program" name="p3">
+/*
+ an empty list
+ a non-empty list
+ a list with exactly one element
+ a list with at least one element
+ a list with exactly two elements
+ a list with at least two elements
+ */
+</div>
+
+<div class="nb-cell markdown" name="md7">
+Which of the above terms unify with the list [ 1, [a,b], 3]?
+
+Does the Prolog term [X, Y] unify with
+</div>
+
+<div class="nb-cell program" name="p4">
+/*
+[1,2]
+[[],2]
+[2,[3,4]]
+[1,2,Z]
+[1,2|Z]
+*/
+</div>
+
+<div class="nb-cell markdown" name="md6">
+Consider the following queries, each unifying 2 Prolog terms. 
+	- What do the terms represent (they contain variables, thus they are so-called *patterns*)?
+    - Do the unifications succeed? Bindings?
+</div>
+
+<div class="nb-cell program" name="p5">
+/*
+?- [A,b] = [a,B].
+?- [A,b] = [a|B].
+?- [A|b] = [a|B].
+?- [A|b] = [a,B].
+*/
+</div>
+
+<div class="nb-cell markdown" name="md14">
+Important remark about the prefix list notation in SWI Prolog. We don't often use that notation in our Prolog programs. But still it is important to know that instead of ./2 a different binary functor is used in SWI Prolog, namely '[|]'/2:
+</div>
+
+<div class="nb-cell query" name="q6">
+X = '[|]'(1,[]).
+</div>
+
+<div class="nb-cell markdown" name="md15">
+Note that in Prolog, terms are said to be *ground* if they do not contain variables, e.g. [1,hello,f(1),[a,b],7,[],hello].
+
+A term that contains variables is said to be *non-ground*, and represents a so-called *pattern*. 
+
+What patterns are expressed by the following non-ground terms?
+
+- s(X)
+- [Head | Tail]
+- [H1, hello, H3 | Tail]
+</div>
+
+<div class="nb-cell markdown" name="md16">
+Does [H1, hello, H3 | Tail] unify with [1,hello,f(1),[a,b],7,[],hello]? and what are then the bindings of the variables H1,H2 and Tail?
+</div>
+
+<div class="nb-cell markdown" name="md8">
+## 3.2 Operations on lists
+
+### listwrite/1 
+The predicate listwrite/1 succeeds if the argument is a list and prints (as a side-effect) all the elements of the list on the current output. You can use the builtin write/1 to print an element.
+</div>
+
+<div class="nb-cell query" name="q4">
+X = hello, write(X), nl.
+</div>
+
+<div class="nb-cell program" name="p7">
+% base case
+
+% recursive case
+</div>
+
+<div class="nb-cell markdown" name="md12">
+What if you want the elements of the list printed in *reverse* order?
+</div>
+
+<div class="nb-cell markdown" name="md11">
+### member/2
+This predicate (from the library lists) can be used to check whether an element belongs to a list, but also in many other ways. What do you expect as answers for:
+</div>
+
+<div class="nb-cell query" name="q1">
+member(1, [1,a,f(a),a,k]).
+</div>
+
+<div class="nb-cell query" name="q7">
+member(1, [1,a,[a,1],1]).
+</div>
+
+<div class="nb-cell query" name="q5">
+member(Z, [1,a,f(a),a]).
+</div>
+
+<div class="nb-cell markdown" name="md13">
+Member/2 is defined by 2 clauses. What about a base case dealing with the empty list []?
+</div>
+
+<div class="nb-cell query" name="q2">
+L1 = [A,B], member(e,L1).
+</div>
+
+<div class="nb-cell query" name="q8">
+L1 = [A,B], member(e,L1), L2 = [C,D], member(f,L2), L1 = L2.
+</div>
+
+<div class="nb-cell markdown" name="md10">
+### append/3 (in Bratko conc/3)
+
+See manual for more example queries https://www.swi-prolog.org/
+
+Use append/3 specify that the last element in a list should be the number 5.
+</div>
+
+<div class="nb-cell query" name="q3">
+L = [1,2,3,5], append(_,_,L).
+</div>
+
+<div class="nb-cell program" data-background="true" name="p6">
+g_append([],L2,L2).
+g_append([X|T], L2,[X|L3]  ) :- g_append(T,L2,L3).
+</div>
+
+</div>

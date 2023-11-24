@@ -1,0 +1,191 @@
+<div class="notebook">
+
+<div class="nb-cell markdown" name="md1">
+# PLPM Lecture 2 (6/10/2023)
+
+## Issues from preparation ??
+## Preparation 
+
+### Predicates versus structures
+
+In logic programming we use *relations* to express relationships between *objects*.
+
+*Prolog predicates* express relationships between their *arguments*. Predicates correspond to relations and the arguments to the objects.  
+
+The arguments are *Prolog terms*: e.g. a number, an atom, a variable or a structured object (aka structure).
+A structured object consists of a *functor* and its arguments that have to be Prolog terms.
+
+Prolog tells the difference between predicates and structures only by seeing where they appear in a clause. Structures (just like any other Prolog term) never appear on their own: they must always appear as the argument to some predicate.
+</div>
+
+<div class="nb-cell program" name="p10">
+% the context is crucial
+date(2,10,2020).       % predicate date/3 
+
+birthday(jan, date(1,12,2000)).			 % 3rd argument: structure with principal functor date/3
+% compare line 3 with 
+birthday(jan,1,12,2000).
+</div>
+
+<div class="nb-cell markdown" name="md17">
+### Nesting
+During the first lecture, we used conjunctions of Prolog goals/queries.
+</div>
+
+<div class="nb-cell program" name="p11">
+grandparent(X,Y) :- parent(X,Z), parent(Z,Y).    % a conjunction of 2 goals in the body of the clause
+</div>
+
+<div class="nb-cell markdown" name="md18">
+So-called nesting of predicates (e.g.,  "parent(X, parent (Y,Z))") is not correct in Prolog. 
+
+However, in the book e.g. on page 43, you can find the following example about line segments:
+</div>
+
+<div class="nb-cell program" name="p6">
+vertical(seg(point(X1,Y1), point(X1,Y2))).
+% ?- vertical(seg(point(2,2), point(2,8))).
+</div>
+
+<div class="nb-cell markdown" name="md12">
+Note the nesting. What is the difference between the two? Why is this correct?
+
+What is vertical? point(X1,Y1)? seg(point(X1,Y1), point(X1,Y2)) ?
+</div>
+
+<div class="nb-cell markdown" name="md16">
+## Structured data
+
+Consider Fig 2.6 : electric circuits (p 38) with as example Prolog terms : 
+seq(r1,r2) 
+par(r1, par(r2,r3))
+par(r1, seq( par(r2,r3), r4))
+
+structures with as functor? components? arity of the functors?
+
+What about the alternative Prolog term: seq(r1,r2,r3)? Is this a good idea?
+What is the equivalent resistor for seq(r1, seq(r2,r3))?
+</div>
+
+<div class="nb-cell program" name="p1">
+replace( seq/2 term , R ) :- % compute resistor R
+replace( seq/x term , R) :-
+</div>
+
+<div class="nb-cell markdown" name="md9">
+What is the difference between the Prolog term seq(r1,r2) and seq(r1, Res)?
+</div>
+
+<div class="nb-cell markdown" name="md2">
+## Matching vs Unification
+
+- Role of unification?
+</div>
+
+<div class="nb-cell markdown" name="md5">
+Which of the following Prolog terms do unify and if so, what is the resulting term?
+</div>
+
+<div class="nb-cell program" name="p4">
+/*
+term1		term2		result?
+may    		may				S
+may			april		F
+may			may(31)		F
+may 		Month       S Month= may
+X			Y			S X= Y
+may(X,2020)	may(3,Year)	 S  X=3  2020=Year
+may(X,2020)	may(3,X)     F 
+may(X,Y)    may(A,B)     S X=A Y =B
+m(X,20,X)	m(5,Y,Y)      F 5=20  
+m(m(X))		m(Y)        S Y = m(X)
+
+*/
+</div>
+
+<div class="nb-cell program" name="p2">
+myunification_predicate(Term,Term).
+</div>
+
+<div class="nb-cell query" name="q1">
+myunification_predicate(A,hallo) .
+</div>
+
+<div class="nb-cell markdown" name="md7">
+- Consider the unification of the following 2 Prolog terms  foo(X,Y,gee(3,X))   and   foo(bar(Z),7,T).
+
+Possible unifiers are:
+
+{X = bar(12),Y = 7,T = gee(3,bar(12)), Z=12}   and as resulting term foo(  ,   ,   )
+
+{X = bar(hh(M)),Y = 7,T = gee(3,bar(hh(M))), Z=hh(M)}     and as resulting term foo(  ,   ,   )
+
+{X = bar(Z), Y = 7, T = gee(3,bar(Z))}     and as resulting term foo(  ,   ,   )
+</div>
+
+<div class="nb-cell query" name="q2">
+foo(X,Y,gee(3,X))  = foo(bar(Z),7,T).
+</div>
+
+<div class="nb-cell markdown" name="md3">
+- Terminolgy (p.58). ISO specification: unify_with_occurs_check/2.
+</div>
+
+<div class="nb-cell query" name="q3">
+unify_with_occurs_check(X, f(X)).
+</div>
+
+<div class="nb-cell query" name="q5">
+X=f(X), write(X).
+</div>
+
+<div class="nb-cell markdown" name="md8">
+- Exercise 2.6 p. 26
+</div>
+
+<div class="nb-cell program" data-background="true" name="p3">
+f(1, one).
+f(s(1), two).
+f(s(s(1)), three).
+f(s(s(s(X))), N) :- f(X,N).
+</div>
+
+<div class="nb-cell query" name="q4">
+f(D,three).
+</div>
+
+<div class="nb-cell markdown" name="md4">
+Interesting queries: 
+?- f(s(1),A).
+?- f(s(s(1)),two).
+?- f(s(s(s(s(s(s(1)))))),C).
+?- f(D,three).
+
+Search trees?  How is the value of C computed?  How many times does ?-f(D,three). succeeds?
+</div>
+
+<div class="nb-cell markdown" name="md10">
+## Prolog and Lists
+A list is either empty or non-empty.
+1.  empty as the *Prolog atom []*.
+2.  non-empty: the first item of the list (the head) + the remaining part of the list (the tail)
+</div>
+
+<div class="nb-cell markdown" name="md6">
+For 2. we use a *binary functor ./2* with as first argument the *head* and as second argument the *tail* of the list:  [1, 2, 3, 4, hello, s(1)]
+
+- How many elements in the list? 
+- Head?
+- Tail?
+</div>
+
+<div class="nb-cell markdown" name="md11">
+Some syntax conventions: 
+- [1] is the representation of .(1,[])
+- [1,2] is the representation of  .(1, .(2,[]))
+- [1,2,3] is the representation of  .(1, .(2, .(3,[])))
+- Head-Tail notation: [1 | [2]]
+- Head-Tail notation: [1 | Tail] and [Head | Tail]
+</div>
+
+</div>

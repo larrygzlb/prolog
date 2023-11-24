@@ -1,0 +1,93 @@
+<div class="notebook">
+
+<div class="nb-cell markdown" name="md2">
+# Reading assignment Lecture 4 PLPM 2023
+
+Prepare the remaining part of Chapter 3: more lists, operators and arithmetic.
+</div>
+
+<div class="nb-cell markdown" name="md3">
+## 3.2 Lists
+
+(Q1) Given the definition of conc/3 on page 65, and knowing that in SWI Prolog conc/3 is defined as append/3, indicate whether the following queries succeed (and give the bindings of the variables) or fail (and explain why).
+</div>
+
+<div class="nb-cell query" name="q2">
+L0 = [1,2,3], append([X], L0, L1).
+</div>
+
+<div class="nb-cell markdown" name="md4">
+Would a real Prolog programmer use append/3 to add an element to the beginning of a list? What is the better way to do it?
+</div>
+
+<div class="nb-cell query" name="q3">
+L0 = [1,2,3], append(L0,[X],L2).
+</div>
+
+<div class="nb-cell markdown" name="md5">
+Is L2 the same list as K in the query ?- K = [1,2,3|X].
+</div>
+
+<div class="nb-cell query" name="q4">
+append(L3, L4, [[1,a],b,f(1)]).
+</div>
+
+<div class="nb-cell markdown" name="md6">
+How many success branches are there in the search tree?
+</div>
+
+<div class="nb-cell markdown" name="md7">
+(Q2) Make exercise 3.2 p. 67 (last/2).
+</div>
+
+<div class="nb-cell markdown" name="md8">
+(Q3) Check the predicate select/3 in the manual. Compare the specification with that of del/3 (3.2.4): what do you notice?
+</div>
+
+<div class="nb-cell markdown" name="md9">
+(Q4) Make exercise 3.3 p.72. (evenlength/2 and oddlength/2)
+</div>
+
+<div class="nb-cell markdown" name="md10">
+## 3.3 Operator notation
+In this section you find the rules the Prolog parser is using, e.g. to parse the term 3 + 2 * 4 or the term 5 - 4 - 3 (with brackets (5 - 4) - 3) . In Figure 3.8 you find the set of predefined operators. Note the occurrence of the operators we are using in our Prolog programs: :-/2, ?-/1, ;/2 and ,/2.
+</div>
+
+<div class="nb-cell markdown" name="md11">
+(Q5) What is the parse tree (aka syntax tree) of the following Prolog clause:
+</div>
+
+<div class="nb-cell program" data-background="true" name="p3">
+p(X,Y) :- 
+    write(1),nl,
+    write(X),nl
+    ;   
+    write(2),nl,
+    write(Y),nl.
+</div>
+
+<div class="nb-cell query" name="q5">
+p(a,b).
+</div>
+
+<div class="nb-cell markdown" name="md13">
+## 3.4 Arithmetic
+There is a *fundamental difference* between unification =/2 and arithmetic is/2. Make sure you understand the difference.
+
+(Q6) Consider the following queries. Indicate whether they succeed (and give the bindings of the variables) or fail (and explain why).
+</div>
+
+<div class="nb-cell program" name="p4">
+/*   
+a) ?- X = 5, X is 3+2 .
+b) ?- X = 4, X is 3+2 .
+c) ?- X = 4, X is 14 mod 5 .
+d) ?- X = 4, X is X+1 .     
+ */
+</div>
+
+<div class="nb-cell markdown" name="md12">
+The difference is also illustrated in the length/2 and the length1/2 predicates on p. 82 and 83.
+</div>
+
+</div>
